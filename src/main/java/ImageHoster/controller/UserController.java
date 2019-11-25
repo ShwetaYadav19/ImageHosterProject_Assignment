@@ -32,17 +32,34 @@ public class UserController {
     public String registration(Model model) {
         User user = new User();
         UserProfile profile = new UserProfile();
-        user.setProfile(profile);
-        model.addAttribute("User", user);
+        user.setProfile( profile );
+        model.addAttribute( "User", user );
         return "users/registration";
     }
 
     //This controller method is called when the request pattern is of type 'users/registration' and also the incoming request is of POST type
     //This method calls the business logic and after the user record is persisted in the database, directs to login page
     @RequestMapping(value = "users/registration", method = RequestMethod.POST)
-    public String registerUser(User user) {
-        userService.registerUser(user);
-        return "redirect:/users/login";
+    public String registerUser(User user, Model model) {
+        String error = "Password must contain atleast 1 alphabet, 1 number & 1 special character";
+        if (!validPassword( user.getPassword() )) {
+            System.out.println( "Password is : " + user.getPassword() );
+            User newUser = new User();
+            UserProfile profile = new UserProfile();
+            newUser.setProfile( profile );
+            model.addAttribute( "User", newUser );
+            model.addAttribute( "passwordTypeError", error );
+            return "users/registration";
+        } else {
+            userService.registerUser( user );
+            return "redirect:/users/login";
+        }
+    }
+
+    //This method checks if the password entered by user has atleast one character(a-z), one digit and one special character.
+    private boolean validPassword(String password) {
+        return password.matches( ".*[0-9]{1,}.*" ) && password.matches( ".*[^A-Za-z0-9]{1,}.*" ) &&
+                password.matches( ".*[A-Za-z]{1,}.*" );
     }
 
     //This controller method is called when the request pattern is of type 'users/login'
@@ -57,9 +74,9 @@ public class UserController {
     //If user with entered username and password does not exist in the database, redirect to the same login page
     @RequestMapping(value = "users/login", method = RequestMethod.POST)
     public String loginUser(User user, HttpSession session) {
-        User existingUser = userService.login(user);
+        User existingUser = userService.login( user );
         if (existingUser != null) {
-            session.setAttribute("loggeduser", existingUser);
+            session.setAttribute( "loggeduser", existingUser );
             return "redirect:/images";
         } else {
             return "users/login";
@@ -76,7 +93,7 @@ public class UserController {
         session.invalidate();
 
         List<Image> images = imageService.getAllImages();
-        model.addAttribute("images", images);
+        model.addAttribute( "images", images );
         return "index";
     }
 }
