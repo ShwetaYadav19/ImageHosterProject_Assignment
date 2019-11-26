@@ -1,8 +1,10 @@
 package ImageHoster.controller;
 
+import ImageHoster.model.Comment;
 import ImageHoster.model.Image;
 import ImageHoster.model.Tag;
 import ImageHoster.model.User;
+import ImageHoster.service.CommentService;
 import ImageHoster.service.ImageService;
 import ImageHoster.service.TagService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,9 @@ public class ImageController {
     @Autowired
     private TagService tagService;
 
+    @Autowired
+    private CommentService commentService;
+
 
     //This method displays all the images in the user home page after successful login
     @RequestMapping("images")
@@ -49,7 +54,9 @@ public class ImageController {
     @RequestMapping("/images/{imageId}/{title}")
     public String showImage(@PathVariable("imageId") Integer imageId, @PathVariable("title") String title, Model model) {
         Image image = imageService.getImage( imageId );
+        List<Comment> comments = image.getComments();
         model.addAttribute( "image", image );
+        model.addAttribute( "comments",comments );
         model.addAttribute( "tags", image.getTags() );
         return "images/image";
     }
@@ -82,6 +89,7 @@ public class ImageController {
         List<Tag> imageTags = findOrCreateTags( tags );
         newImage.setTags( imageTags );
         newImage.setDate( new Date() );
+        newImage.setComment( new ArrayList<>(  ) );
         imageService.uploadImage( newImage );
         return "redirect:/images";
     }
@@ -97,6 +105,8 @@ public class ImageController {
         String error = "Only the owner of the image can edit the image";
         Image image = imageService.getImage( imageId );
         model.addAttribute( "image", image );
+        model.addAttribute( "comments",image.getComments() );
+        model.addAttribute( "tags", image.getTags() );
         User currentUser = (User) session.getAttribute( "loggeduser" );
         if (!currentUser.getUsername().equals( image.getUser().getUsername() )) {
             model.addAttribute("tags", image.getTags());
@@ -138,7 +148,7 @@ public class ImageController {
         updatedImage.setUser( user );
         updatedImage.setTags( imageTags );
         updatedImage.setDate( new Date() );
-
+        updatedImage.setComment( image.getComments() );
         imageService.updateImage( updatedImage );
         return "redirect:/images/" + updatedImage.getTitle();
     }
@@ -154,6 +164,7 @@ public class ImageController {
         model.addAttribute( "image", image );
         User currentUser = (User) session.getAttribute( "loggeduser" );
         if (!currentUser.getUsername().equals( image.getUser().getUsername() )) {
+            model.addAttribute( "comments",image.getComments());
             model.addAttribute("tags", image.getTags());
             model.addAttribute( "deleteError", error );
             return "images/image";
@@ -163,7 +174,6 @@ public class ImageController {
         }
 
     }
-
 
     //This method converts the image to Base64 format
     private String convertUploadedFileToBase64(MultipartFile file) throws IOException {
