@@ -56,7 +56,7 @@ public class ImageController {
         Image image = imageService.getImage( imageId );
         List<Comment> comments = image.getComments();
         model.addAttribute( "image", image );
-        model.addAttribute( "comments",comments );
+        model.addAttribute( "comments", comments );
         model.addAttribute( "tags", image.getTags() );
         return "images/image";
     }
@@ -89,7 +89,7 @@ public class ImageController {
         List<Tag> imageTags = findOrCreateTags( tags );
         newImage.setTags( imageTags );
         newImage.setDate( new Date() );
-        newImage.setComment( new ArrayList<>(  ) );
+        newImage.setComment( new ArrayList<>() );
         imageService.uploadImage( newImage );
         return "redirect:/images";
     }
@@ -105,11 +105,11 @@ public class ImageController {
         String error = "Only the owner of the image can edit the image";
         Image image = imageService.getImage( imageId );
         model.addAttribute( "image", image );
-        model.addAttribute( "comments",image.getComments() );
+        model.addAttribute( "comments", image.getComments() );
         model.addAttribute( "tags", image.getTags() );
         User currentUser = (User) session.getAttribute( "loggeduser" );
         if (!currentUser.getUsername().equals( image.getUser().getUsername() )) {
-            model.addAttribute("tags", image.getTags());
+            model.addAttribute( "tags", image.getTags() );
             model.addAttribute( "editError", error );
             return "images/image";
         } else {
@@ -150,7 +150,7 @@ public class ImageController {
         updatedImage.setDate( new Date() );
         updatedImage.setComment( image.getComments() );
         imageService.updateImage( updatedImage );
-        return "redirect:/images/" + updatedImage.getId()+"/"+updatedImage.getTitle();
+        return "redirect:/images/" + updatedImage.getId() + "/" + updatedImage.getTitle();
     }
 
 
@@ -164,8 +164,8 @@ public class ImageController {
         model.addAttribute( "image", image );
         User currentUser = (User) session.getAttribute( "loggeduser" );
         if (!currentUser.getUsername().equals( image.getUser().getUsername() )) {
-            model.addAttribute( "comments",image.getComments());
-            model.addAttribute("tags", image.getTags());
+            model.addAttribute( "comments", image.getComments() );
+            model.addAttribute( "tags", image.getTags() );
             model.addAttribute( "deleteError", error );
             return "images/image";
         } else {

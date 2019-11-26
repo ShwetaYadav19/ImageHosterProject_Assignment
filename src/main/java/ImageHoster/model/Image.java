@@ -73,7 +73,6 @@ public class Image {
     }
 
 
-
     public Integer getId() {
         return id;
     }
@@ -134,7 +133,7 @@ public class Image {
         return comments;
     }
 
-    public void setComment( List<Comment>  comment) {
+    public void setComment(List<Comment> comment) {
         this.comments = comment;
     }
 }

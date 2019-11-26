@@ -24,7 +24,7 @@ public class UserRepository {
         try {
             transaction.begin();
             //persist() method changes the state of the model object from transient state to persistence state
-            em.persist(newUser);
+            em.persist( newUser );
             transaction.commit();
         } catch (Exception e) {
             transaction.rollback();
@@ -40,9 +40,9 @@ public class UserRepository {
     public User checkUser(String username, String password) {
         try {
             EntityManager em = emf.createEntityManager();
-            TypedQuery<User> typedQuery = em.createQuery("SELECT u FROM User u WHERE u.username = :username AND u.password = :password", User.class);
-            typedQuery.setParameter("username", username);
-            typedQuery.setParameter("password", password);
+            TypedQuery<User> typedQuery = em.createQuery( "SELECT u FROM User u WHERE u.username = :username AND u.password = :password", User.class );
+            typedQuery.setParameter( "username", username );
+            typedQuery.setParameter( "password", password );
 
             return typedQuery.getSingleResult();
         } catch (NoResultException nre) {

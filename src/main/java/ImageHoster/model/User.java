@@ -88,7 +88,7 @@ public class User {
         return comments;
     }
 
-    public void setComment( List<Comment>  comment) {
+    public void setComment(List<Comment> comment) {
         this.comments = comment;
     }
 }
